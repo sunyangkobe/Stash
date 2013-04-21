@@ -1,13 +1,13 @@
 <Alloy>
 	<TabGroup>
-		<Tab title="Tab 1" icon="KS_nav_ui.png">
+		<Tab title="Map View" icon="KS_nav_ui.png">
 			<Window title="Tab 1">
-				<Label>I am Window 1</Label>
+				<Label>Map goes here</Label>
 			</Window>
 		</Tab>
-		<Tab title="Tab 2" icon="KS_nav_views.png">
+		<Tab title="List View" icon="KS_nav_views.png">
 			<Window title="Tab 2">
-				<Label>I am Window 2</Label>
+				<Label>List goes here</Label>
 			</Window>
 		</Tab>
 	</TabGroup>
