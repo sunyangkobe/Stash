@@ -11,19 +11,27 @@ function Controller() {
     $.__views.mapWin && $.addTopLevelView($.__views.mapWin);
     exports.destroy = function() {};
     _.extend($, $.__views);
-    var mapView = Titanium.Map.createView({
-        mapType: Titanium.Map.STANDARD_TYPE,
-        region: {
-            latitude: 37.389569,
-            longitude: -122.050212,
-            latitudeDelta: .1,
-            longitudeDelta: .1
-        },
-        animate: true,
-        regionFit: true,
-        userLocation: false
+    Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
+    Titanium.Geolocation.distanceFilter = 10;
+    Titanium.Geolocation.getCurrentPosition(function(e) {
+        if (e.error) {
+            alert("Stash cannot get your current location");
+            return;
+        }
+        var mapview = Titanium.Map.createView({
+            mapType: Titanium.Map.STANDARD_TYPE,
+            region: {
+                latitude: e.coords.latitude,
+                longitude: e.coords.longitude,
+                latitudeDelta: .01,
+                longitudeDelta: .01
+            },
+            animate: true,
+            regionFit: true,
+            userLocation: true
+        });
+        $.mapWin.add(mapview);
     });
-    $.mapWin.add(mapView);
     _.extend($, exports);
 }
 
