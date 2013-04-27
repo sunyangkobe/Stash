@@ -1,4 +1,19 @@
 function Controller() {
+    function startApp() {
+        $.index.addEventListener("open", function() {
+            var activity = $.index.getActivity();
+            activity.onCreateOptionsMenu = function(e) {
+                var post = e.menu.add({
+                    title: "Post",
+                    showAsAction: Ti.Android.SHOW_AS_ACTION_ALWAYS
+                });
+                post.addEventListener("click", function() {});
+            };
+            activity.actionBar.title = "Stash";
+            activity.invalidateOptionsMenu();
+        });
+        $.index.open();
+    }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     arguments[0] ? arguments[0]["__parentSymbol"] : null;
     arguments[0] ? arguments[0]["$model"] : null;
@@ -34,21 +49,17 @@ function Controller() {
     $.__views.index && $.addTopLevelView($.__views.index);
     exports.destroy = function() {};
     _.extend($, $.__views);
-    $.index.addEventListener("open", function() {
-        var activity = $.index.getActivity();
-        activity.onCreateOptionsMenu = function(e) {
-            var menuItem = e.menu.add({
-                title: "Post",
-                showAsAction: Ti.Android.SHOW_AS_ACTION_ALWAYS
-            });
-            menuItem.addEventListener("click", function() {
-                alert("pop up a window to send the message");
-            });
-        };
-        activity.actionBar.title = "Stash";
-        activity.invalidateOptionsMenu();
+    var Cloud = require("ti.cloud");
+    Cloud.debug = true;
+    Cloud.Users.login({
+        login: "root",
+        password: "Temp4now"
+    }, function(e) {
+        if (e.success) {
+            Ti.API.info("Logged in user, id = " + users[0].id + ", session ID = " + Cloud.sessionId);
+            startApp();
+        } else Ti.API.info("Login failed.");
     });
-    $.index.open();
     _.extend($, exports);
 }
 
