@@ -1,14 +1,10 @@
 <Alloy>
 	<TabGroup>
-		<Tab title="Map View" icon="KS_nav_ui.png">
-			<Window title="Tab 1">
-				<Label>Map goes here</Label>
-			</Window>
+		<Tab id="leftTab" title="Map View" icon="KS_nav_ui.png">
+			<Require src="map" type="view" id="mapTab" />
 		</Tab>
-		<Tab title="List View" icon="KS_nav_views.png">
-			<Window title="Tab 2">
-				<Label>List goes here</Label>
-			</Window>
+		<Tab id="rightTab" title="List View" icon="KS_nav_views.png">
+			<Require src="list" type="view" id="listTab" />
 		</Tab>
 	</TabGroup>
 </Alloy>
