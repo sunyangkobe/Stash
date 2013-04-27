@@ -47,7 +47,6 @@ exports.postActivity = function() {
 	postBtn.addEventListener("click", function(e) {
 		var Cloud = require('ti.cloud');
 		Cloud.debug = true;
-		alert(textArea.getValue());
 		Cloud.Objects.create({
 			classname : "messages",
 			fields : {
