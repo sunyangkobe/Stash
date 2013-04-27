@@ -3,11 +3,14 @@ function Controller() {
         $.index.addEventListener("open", function() {
             var activity = $.index.getActivity();
             activity.onCreateOptionsMenu = function(e) {
-                var post = e.menu.add({
+                var menuItem = e.menu.add({
                     title: "Post",
                     showAsAction: Ti.Android.SHOW_AS_ACTION_ALWAYS
                 });
-                post.addEventListener("click", function() {});
+                menuItem.addEventListener("click", function() {
+                    var postController = require("lib/post");
+                    postController.postActivity();
+                });
             };
             activity.actionBar.title = "Stash";
             activity.invalidateOptionsMenu();
@@ -51,14 +54,13 @@ function Controller() {
     _.extend($, $.__views);
     var Cloud = require("ti.cloud");
     Cloud.debug = true;
-    Cloud.Users.login({
-        login: "root",
-        password: "Temp4now"
+    Cloud.Users.secureLogin({
+        title: "Log in to Stash"
     }, function(e) {
         if (e.success) {
-            Ti.API.info("Logged in user, id = " + users[0].id + ", session ID = " + Cloud.sessionId);
+            Ti.API.info("Success. accessToken = " + Cloud.accessToken);
             startApp();
-        } else Ti.API.info("Login failed.");
+        } else Ti.API.info("Error: " + JSON.stringify(e));
     });
     _.extend($, exports);
 }

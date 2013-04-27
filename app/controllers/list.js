@@ -9,8 +9,9 @@ if (Ti.Platform.osname == "iphone") {
 	});
 
 	postBtn.addEventListener('click', function(e) {
-		alert("pop up a window to send the message");
+		var postController = require('lib/post');
+		postController.postActivity();
 	});
-	
+
 	$.listWin.rightNavButton = postBtn;
 }
