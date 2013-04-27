@@ -11,6 +11,7 @@ function Controller() {
     $.__views.mapWin && $.addTopLevelView($.__views.mapWin);
     exports.destroy = function() {};
     _.extend($, $.__views);
+    Ti.Geolocation.purpose = "Recieve User Location";
     Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
     Titanium.Geolocation.distanceFilter = 10;
     Titanium.Geolocation.getCurrentPosition(function(e) {
