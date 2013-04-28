@@ -35,7 +35,7 @@ function Controller() {
                 }
             }
         }, function(e) {
-            e.success ? addAnnotationsOnMap(mapView, e.messages) : alert("Error:\n" + (e.error && e.message || JSON.stringify(e)));
+            e.success && addAnnotationsOnMap(mapView, e.messages);
         });
     }
     function addAnnotationsOnMap(mapView, messages) {
@@ -71,6 +71,17 @@ function Controller() {
     $.__views.mapWin && $.addTopLevelView($.__views.mapWin);
     exports.destroy = function() {};
     _.extend($, $.__views);
+    if ("iphone" == Ti.Platform.osname) {
+        var postBtn = Ti.UI.createButton({
+            title: "Post",
+            style: Titanium.UI.iPhone.SystemButtonStyle.PLAIN
+        });
+        postBtn.addEventListener("click", function() {
+            var postController = require("lib/post");
+            postController.postActivity();
+        });
+        $.mapWin.rightNavButton = postBtn;
+    }
     var mapview = Titanium.Map.createView({
         mapType: Titanium.Map.STANDARD_TYPE,
         animate: true,

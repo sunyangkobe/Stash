@@ -22,7 +22,14 @@ function postOnCloud(popupWin, msg, expire, lng, lat) {
             coordinates: [ lng, lat ]
         }
     }, function(e) {
-        e.success ? popupWin.close() : alert("Error:\n" + (e.error && e.message || JSON.stringify(e)));
+        if (e.success) {
+            var toast = Titanium.UI.createNotification({
+                duration: Ti.UI.NOTIFICATION_DURATION_LONG,
+                message: "Post Successfully!"
+            });
+            toast.show();
+            popupWin.close();
+        } else alert("Error:\n" + (e.error && e.message || JSON.stringify(e)));
     });
 }
 

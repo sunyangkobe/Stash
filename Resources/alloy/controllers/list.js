@@ -37,8 +37,7 @@ function Controller() {
         var data = [];
         for (var i = 0; messages.length > i; i++) {
             var msg = messages[i];
-            var row;
-            var row = Ti.UI.createTableViewRow({
+            if ("android" == Ti.Platform.osname) var row = Ti.UI.createTableViewRow({
                 title: msg.message,
                 color: "white",
                 font: {
@@ -48,6 +47,14 @@ function Controller() {
                 height: Ti.UI.SIZE,
                 top: 10,
                 bottom: 10
+            }); else if ("iphone" == Ti.Platform.osname) var row = Ti.UI.createTableViewRow({
+                title: msg.message,
+                color: "black",
+                font: {
+                    fontSize: 30,
+                    fontFamily: "Helvetica Neue"
+                },
+                height: Ti.UI.SIZE
             });
             var createDate = new Date(Date(msg.created_at));
             var expireDate = new Date(Date.parse(msg.expiredate));
@@ -89,11 +96,22 @@ function Controller() {
     $.__views.listWin && $.addTopLevelView($.__views.listWin);
     exports.destroy = function() {};
     _.extend($, $.__views);
+    if ("iphone" == Ti.Platform.osname) {
+        var postBtn = Ti.UI.createButton({
+            title: "Post",
+            style: Titanium.UI.iPhone.SystemButtonStyle.PLAIN
+        });
+        postBtn.addEventListener("click", function() {
+            var postController = require("lib/post");
+            postController.postActivity();
+        });
+        $.listWin.rightNavButton = postBtn;
+    }
     var tableview;
-    tableview = Titanium.UI.createTableView({
+    "android" == Ti.Platform.osname ? tableview = Titanium.UI.createTableView({
         left: 20,
         right: 20
-    });
+    }) : "iphone" == Ti.Platform.osname && (tableview = Titanium.UI.createTableView());
     $.listWin.add(tableview);
     $.listWin.addEventListener("focus", function() {
         refreshLocation();
