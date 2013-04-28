@@ -48,7 +48,7 @@ exports.postActivity = function() {
         type: "submit",
         id: "id_backBtn"
     } ];
-    var forms = require("forms");
+    var forms = require("lib/forms");
     var form = forms.createForm({
         style: forms.STYLE_LABEL,
         fields: fields

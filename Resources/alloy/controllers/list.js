@@ -37,17 +37,26 @@ function Controller() {
         var data = [];
         for (var i = 0; messages.length > i; i++) {
             var msg = messages[i];
-            var row = Ti.UI.createTableViewRow({
+            if ("android" == Ti.Platform.osname) var row = Ti.UI.createTableViewRow({
                 title: msg.message,
                 color: "white",
                 font: {
                     fontSize: 30,
                     fontFamily: "Helvetica Neue"
                 },
+                height: Ti.UI.SIZE,
                 top: 10,
                 bottom: 10
+            }); else if ("iphone" == Ti.Platform.osname) var row = Ti.UI.createTableViewRow({
+                title: msg.message,
+                color: "black",
+                font: {
+                    fontSize: 30,
+                    fontFamily: "Helvetica Neue"
+                },
+                height: Ti.UI.SIZE
             });
-            var createDate = new Date(Date.parse(msg.created_at));
+            var createDate = new Date(Date(msg.created_at));
             var expireDate = new Date(Date.parse(msg.expiredate));
             row.addEventListener("click", function() {
                 var info = "Message: " + msg.message + "\n";
@@ -59,6 +68,7 @@ function Controller() {
             });
             data.push(row);
         }
+        alert(data.length);
         tableview.setData(data);
     }
     function distance(lat1, lng1, lat2, lng2) {

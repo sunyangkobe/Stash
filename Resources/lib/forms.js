@@ -60,26 +60,6 @@ var handleStyle = function(form, textField, title) {
     }
 };
 
-var setupPickerTextField = function(textField, pickerType, data) {
-    textField.editable = false;
-    textField.rightButton = Ti.UI.createButton({
-        style: Ti.UI.iPhone.SystemButton.DISCLOSURE,
-        transform: Ti.UI.create2DMatrix().rotate(90)
-    });
-    textField.rightButtonMode = Ti.UI.INPUT_BUTTONMODE_ALWAYS;
-    textField.addEventListener("focus", function(e) {
-        e.source.blur();
-        require("semiModalPicker").createSemiModalPicker({
-            textField: textField,
-            value: textField.value,
-            type: pickerType,
-            data: data
-        }).open({
-            animated: true
-        });
-    });
-};
-
 var ctr = 1;
 
 var addField = function(field, fieldRefs) {
@@ -99,20 +79,21 @@ var addField = function(field, fieldRefs) {
             width: "250dp",
             top: "10dp",
             color: "#222",
-            borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
-            keyboardType: Ti.UI.KEYBOARD_ASCII
+            borderWidth: 2,
+            borderColor: "#bbb",
+            borderRadius: 5,
+            keyboardType: Ti.UI.KEYBOARD_DEFAULT,
+            suppressReturn: false
         });
         handleStyle(form, fieldObject, title);
-    } else if (type === exports.TYPE_DATE) if (isAndroid) {
+    } else if (type === exports.TYPE_DATE) {
         fieldObject = Ti.UI.createPicker({
-            type: Ti.UI.PICKER_TYPE_DATE
+            type: Ti.UI.PICKER_TYPE_DATE,
+            bottom: 0,
+            selectionIndicator: true
         });
         handleStyle(form, void 0, title);
-    } else {
-        fieldObject = Ti.UI.createTextField(textFieldDefaults);
-        handleStyle(form, fieldObject, title);
-        setupPickerTextField(fieldObject, Ti.UI.PICKER_TYPE_DATE);
-    } else if (type === exports.TYPE_PICKER) if (isAndroid) {
+    } else if (type === exports.TYPE_PICKER) {
         fieldObject = Ti.UI.createPicker({
             type: Ti.UI.PICKER_TYPE_PLAIN,
             width: "250dp"
@@ -121,10 +102,6 @@ var addField = function(field, fieldRefs) {
         for (var i in field.data) fieldObject.add(Ti.UI.createPickerRow({
             title: field.data[i]
         }));
-    } else {
-        fieldObject = Ti.UI.createTextField(textFieldDefaults);
-        handleStyle(form, fieldObject, title);
-        setupPickerTextField(fieldObject, Ti.UI.PICKER_TYPE_PLAIN, field.data);
     } else if (type === exports.TYPE_SUBMIT) {
         var button = Ti.UI.createButton({
             title: title,

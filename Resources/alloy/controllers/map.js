@@ -42,11 +42,10 @@ function Controller() {
         var annotations = [];
         for (var i = 0; messages.length > i; i++) {
             var msg = messages[i];
-            var createDate = new Date(Date.parse(msg.created_at));
+            new Date(Date.parse(msg.created_at));
             var expireDate = new Date(Date.parse(msg.expiredate));
-            var info = "Created by: " + msg.user.username;
-            info += " on: " + createDate.toLocaleDateString() + "\n";
-            info += "Expired on: " + expireDate.toLocaleDateString();
+            var info = "Created by " + msg.user.username;
+            info += " and expired on: " + expireDate.toLocaleDateString();
             var annotation = Titanium.Map.createAnnotation({
                 latitude: msg.coordinates[0][1],
                 longitude: msg.coordinates[0][0],
