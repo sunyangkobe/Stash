@@ -19,8 +19,6 @@ Cloud.Users.secureLogin({
 }); 
 
 
-//startApp();
-
 function startApp() {
 	if (Ti.Platform.osname == "android") {
 		$.index.addEventListener("open", function(e) {
