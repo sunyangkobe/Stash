@@ -17,10 +17,15 @@ if (Ti.Platform.osname == "iphone") {
 }
 
 // create table view
-var tableview = Titanium.UI.createTableView({
-	left : 20,
-	right : 20,
-});
+var tableview;
+if (Ti.Platform.osname == "android") {
+	tableview = Titanium.UI.createTableView({
+		left : 20,
+		right : 20,
+	});
+} else if (Ti.Platform.osname == "iphone") {
+	tableview = Titanium.UI.createTableView();
+}
 
 $.listWin.add(tableview);
 $.listWin.addEventListener("focus", function(e) {
@@ -43,12 +48,17 @@ function refreshLocation() {
 }
 
 function getMessagesOnCloud(lng, lat) {
+	var yesterday = new Date();
+	yesterday.setDate(yesterday.getDate() - 1);
 	var Cloud = require('ti.cloud');
 	Cloud.debug = true;
 	Cloud.Objects.query({
 		classname : "messages",
 		limit : 50,
 		where : {
+			expiredate : {
+				"$gt" : yesterday
+			},
 			coordinates : {
 				$nearSphere : [lng, lat],
 				$maxDistance : 0.00126
@@ -57,14 +67,14 @@ function getMessagesOnCloud(lng, lat) {
 		order : "created_at"
 	}, function(e) {
 		if (e.success) {
-			createTableView(e.messages);
+			createTableView(e.messages, lng, lat);
 		} else {
-			alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
+			// alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
 		}
 	});
 }
 
-function createTableView(messages) {
+function createTableView(messages, lng, lat) {
 	var data = [];
 	for (var i = 0; i < messages.length; i++) {
 		var msg = messages[i];
@@ -78,14 +88,33 @@ function createTableView(messages) {
 			top : 10,
 			bottom : 10
 		});
+		var createDate = new Date(Date.parse(msg.created_at));
+		var expireDate = new Date(Date.parse(msg.expiredate));
 		row.addEventListener("click", function(e) {
 			var info = "Message: " + msg.message + "\n";
 			info += "Created by: " + msg.user.username + "\n";
-			info += "Created on: " + msg.created_at + "\n";
+			info += "Created on: " + createDate.toLocaleDateString() + "\n";
+			info += "Expired on: " + expireDate.toLocaleDateString() + "\n";
+			info += "Distance: " + distance(lat, lng, msg.coordinates[0][1], msg.coordinates[0][0]) + " km";
 			alert(info);
 		});
 		data.push(row);
 	}
 
 	tableview.setData(data);
+}
+
+function distance(lat1, lng1, lat2, lng2) {
+	var radlat1 = Math.PI * lat1 / 180;
+	var radlat2 = Math.PI * lat2 / 180;
+	var radlng1 = Math.PI * lng1 / 180;
+	var radlng2 = Math.PI * lng2 / 180;
+	var theta = lng1 - lng2;
+	var radtheta = Math.PI * theta / 180;
+	var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+	dist = Math.acos(dist);
+	dist = dist * 180 / Math.PI;
+	dist = dist * 60 * 1.1515;
+	dist = dist * 1.609344;
+	return parseFloat(dist).toFixed(2)
 }

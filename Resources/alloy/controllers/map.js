@@ -18,12 +18,17 @@ function Controller() {
         });
     }
     function getMessagesOnCloud(mapView, lng, lat) {
+        var yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
         var Cloud = require("ti.cloud");
         Cloud.debug = true;
         Cloud.Objects.query({
             classname: "messages",
             limit: 50,
             where: {
+                expiredate: {
+                    $gt: yesterday
+                },
                 coordinates: {
                     $nearSphere: [ lng, lat ],
                     $maxDistance: .00126
@@ -37,11 +42,16 @@ function Controller() {
         var annotations = [];
         for (var i = 0; messages.length > i; i++) {
             var msg = messages[i];
+            var createDate = new Date(Date.parse(msg.created_at));
+            var expireDate = new Date(Date.parse(msg.expiredate));
+            var info = "Created by: " + msg.user.username;
+            info += " on: " + createDate.toLocaleDateString() + "\n";
+            info += "Expired on: " + expireDate.toLocaleDateString();
             var annotation = Titanium.Map.createAnnotation({
                 latitude: msg.coordinates[0][1],
                 longitude: msg.coordinates[0][0],
                 title: msg.message,
-                subtitle: "created by: " + msg.user.username,
+                subtitle: info,
                 image: "/images/marker_purple.png",
                 animate: true,
                 draggable: false
@@ -62,6 +72,17 @@ function Controller() {
     $.__views.mapWin && $.addTopLevelView($.__views.mapWin);
     exports.destroy = function() {};
     _.extend($, $.__views);
+    if ("iphone" == Ti.Platform.osname) {
+        var postBtn = Ti.UI.createButton({
+            title: "Post",
+            style: Titanium.UI.iPhone.SystemButtonStyle.PLAIN
+        });
+        postBtn.addEventListener("click", function() {
+            var postController = require("lib/post");
+            postController.postActivity();
+        });
+        $.mapWin.rightNavButton = postBtn;
+    }
     var mapview = Titanium.Map.createView({
         mapType: Titanium.Map.STANDARD_TYPE,
         animate: true,

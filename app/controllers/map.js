@@ -49,12 +49,17 @@ function refreshAnnotations(mapView) {
 }
 
 function getMessagesOnCloud(mapView, lng, lat) {
+	var yesterday = new Date();
+	yesterday.setDate(yesterday.getDate() - 1);
 	var Cloud = require('ti.cloud');
 	Cloud.debug = true;
 	Cloud.Objects.query({
 		classname : "messages",
 		limit : 50,
 		where : {
+			expiredate : {
+				"$gt" : yesterday
+			},
 			coordinates : {
 				$nearSphere : [lng, lat],
 				$maxDistance : 0.00126
@@ -73,11 +78,16 @@ function addAnnotationsOnMap(mapView, messages) {
 	var annotations = [];
 	for (var i = 0; i < messages.length; i++) {
 		var msg = messages[i];
+		var createDate = new Date(Date.parse(msg.created_at));
+		var expireDate = new Date(Date.parse(msg.expiredate));
+		var info = "Created by: " + msg.user.username;
+		info += " on: " + createDate.toLocaleDateString() + "\n";
+		info += "Expired on: " + expireDate.toLocaleDateString();
 		var annotation = Titanium.Map.createAnnotation({
 			latitude : msg.coordinates[0][1],
 			longitude : msg.coordinates[0][0],
 			title : msg.message,
-			subtitle : "created by: " + msg.user.username,
+			subtitle : info,
 			image : "/images/marker_purple.png",
 			animate : true,
 			draggable : false

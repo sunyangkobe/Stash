@@ -4,23 +4,56 @@
 
 exports.postActivity = function() {
 	var popupWin = Ti.UI.createWindow({
-		backgroundColor : 'black',
-		opacity : 0.5,
+		backgroundColor : 'white',
+		// opacity : 0.5,
 		navBarHidden : true,
-		layout : "vertical"
 	});
 
-	popupWin.add(getLabel());
+	var fields = [{
+		title : 'Message: ',
+		type : 'textarea',
+		id : 'id_msg'
+	}, {
+		title : 'Expire Date: ',
+		type : 'date',
+		id : 'id_expire'
+	}, {
+		title : 'Post',
+		type : 'submit',
+		id : 'id_postBtn'
+	}, {
+		title : 'Back',
+		type : 'submit',
+		id : 'id_backBtn'
+	}];
 
-	var textArea = getTextArea();
-	popupWin.add(textArea);
+	var forms = require('forms');
+	var form = forms.createForm({
+		style : forms.STYLE_LABEL,
+		fields : fields
+	});
 
-	// var btnBar = Ti.UI.createButtonBar({
-	// width : 250,
-	// top : 300
-	// });
-	popupWin.add(getPostBtn(textArea));
-	popupWin.add(getBackBtn(popupWin));
+	form.addEventListener('id_postBtn', function(e) {
+		var date = new Date(Date.parse(e.values.id_expire));
+		var yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+
+		if (yesterday >= date) {
+			alert("Expiration date cannot be smaller than today");
+			return;
+		}
+
+		if (e.values.id_msg.length == 0) {
+			alert("Message cannot be empty");
+			return;
+		}
+		collectCurrentLocationPost(popupWin, e.values.id_msg.replace(/^\s+|\s+$/g, ''), e.values.id_expire);
+	});
+
+	form.addEventListener('id_backBtn', function(e) {
+		popupWin.close();
+	});
+	popupWin.add(form);
 
 	//open the window as a modal window (popup like)
 	popupWin.open({
@@ -29,62 +62,7 @@ exports.postActivity = function() {
 		modalStyle : Ti.UI.iPhone.MODAL_PRESENTATION_FORMSHEET
 	});
 }
-function getLabel() {
-	return Ti.UI.createLabel({
-		text : "Message",
-		color : "white",
-		font : {
-			size : 20
-		},
-		textAlign : "left"
-	});
-}
-
-function getTextArea() {
-	return Ti.UI.createTextArea({
-		borderWidth : 2,
-		borderRadius : 5,
-		textAlign : "left",
-		font : {
-			color : "black"
-		},
-		width : 400,
-		height : 300,
-		keyboardType : Ti.UI.KEYBOARD_ASCII,
-		returnKeyType : Ti.UI.RETURNKEY_DONE
-	});
-}
-
-function getBackBtn(win) {
-	var backBtn = Ti.UI.createButton({
-		title : "Back",
-		style : Titanium.UI.iPhone.SystemButtonStyle.PLAIN,
-	});
-
-	backBtn.addEventListener("click", function(e) {
-		win.close();
-	});
-	return backBtn;
-}
-
-function getPostBtn(textArea) {
-	var postBtn = Ti.UI.createButton({
-		title : "Post",
-		style : Titanium.UI.iPhone.SystemButtonStyle.PLAIN,
-	});
-
-	postBtn.addEventListener("click", function(e) {
-		if (textArea.getValue().length == 0) {
-			alert("Message cannot be empty");
-			return;
-		}
-		collectCurrentLocationPost(textArea.getValue());
-	});
-
-	return postBtn;
-}
-
-function collectCurrentLocationPost(msg) {
+function collectCurrentLocationPost(popupWin, msg, expire) {
 	Ti.Geolocation.purpose = "Recieve User Location";
 	Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 	Titanium.Geolocation.distanceFilter = 10;
@@ -93,23 +71,23 @@ function collectCurrentLocationPost(msg) {
 			alert('Stash cannot get your current location');
 			return;
 		}
-		postOnCloud(msg, e.coords.longitude, e.coords.latitude);
+		postOnCloud(popupWin, msg, expire, e.coords.longitude, e.coords.latitude);
 	});
 }
 
-function postOnCloud(msg, lng, lat) {
+function postOnCloud(popupWin, msg, expire, lng, lat) {
 	var Cloud = require('ti.cloud');
 	Cloud.debug = true;
 	Cloud.Objects.create({
 		classname : "messages",
 		fields : {
 			message : msg,
+			expiredate : expire,
 			coordinates : [lng, lat]
 		}
 	}, function(e) {
 		if (e.success) {
-			var msg = e.messages[0];
-			alert('Success:\n' + 'id: ' + msg.id + '\n' + 'message: ' + msg.message + '\n' + 'coordinates: ' + msg.coordinates + '\n' + 'created_at: ' + msg.created_at);
+			popupWin.close();
 		} else {
 			alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
 		}
