@@ -114,7 +114,6 @@ function createTableView(messages, lng, lat) {
 		});
 		data.push(row);
 	}
-	alert(data.length);
 	tableview.setData(data);
 }
 
