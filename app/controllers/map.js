@@ -69,7 +69,7 @@ function getMessagesOnCloud(mapView, lng, lat) {
 		if (e.success) {
 			addAnnotationsOnMap(mapView, e.messages);
 		} else {
-			alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
+			//alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
 		}
 	});
 }

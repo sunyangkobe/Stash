@@ -20,7 +20,7 @@ exports.TYPE_TEXTAREA = "textarea";
 
 exports.TYPE_SUBMIT = "submit";
 
-var isAndroid = "android" === Ti.Platform.osname;
+var isAndroid = true;
 
 var textFieldDefaults = {
     height: "40dp",
