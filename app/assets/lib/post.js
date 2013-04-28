@@ -87,11 +87,13 @@ function postOnCloud(popupWin, msg, expire, lng, lat) {
 		}
 	}, function(e) {
 		if (e.success) {
-			var toast = Titanium.UI.createNotification({
-				duration : Ti.UI.NOTIFICATION_DURATION_LONG,
-				message : "Post Successfully!"
-			});
-			toast.show();
+			if (Ti.Platform.osname == "android") {
+				var toast = Titanium.UI.createNotification({
+					duration : Ti.UI.NOTIFICATION_DURATION_LONG,
+					message : "Post Successfully!"
+				});
+				toast.show();
+			}
 			popupWin.close();
 		} else {
 			alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
