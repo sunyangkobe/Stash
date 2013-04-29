@@ -12,8 +12,6 @@ function Controller() {
         });
     }
     function getMessagesOnCloud(lng, lat) {
-        var yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
         var Cloud = require("ti.cloud");
         Cloud.debug = true;
         Cloud.Objects.query({
@@ -21,7 +19,7 @@ function Controller() {
             limit: 50,
             where: {
                 expiredate: {
-                    $gt: yesterday
+                    $gt: new Date()
                 },
                 coordinates: {
                     $nearSphere: [ lng, lat ],
@@ -38,7 +36,8 @@ function Controller() {
         for (var i = 0; messages.length > i; i++) {
             var msg = messages[i];
             var row;
-            var row = Ti.UI.createTableViewRow({
+            "android" == Ti.Platform.osname ? row = Ti.UI.createTableViewRow({
+                theid: i,
                 title: msg.message,
                 color: "white",
                 font: {
@@ -48,15 +47,25 @@ function Controller() {
                 height: Ti.UI.SIZE,
                 top: 10,
                 bottom: 10
-            });
-            var createDate = new Date(Date(msg.created_at));
-            var expireDate = new Date(Date.parse(msg.expiredate));
-            row.addEventListener("click", function() {
-                var info = "Message: " + msg.message + "\n";
+            }) : "iphone" == Ti.Platform.osname && (row = Ti.UI.createTableViewRow({
+                theid: i,
+                title: msg.message,
+                color: "black",
+                font: {
+                    fontSize: 30,
+                    fontFamily: "Helvetica Neue"
+                },
+                height: Ti.UI.SIZE
+            }));
+            row.addEventListener("click", function(e) {
+                var msg = messages[e.index];
+                var createDate = new Date(Date(msg.created_at));
+                var expireDate = new Date(Date.parse(msg.expiredate));
+                var info = "Message: " + msg.message + "\n\n\n";
                 info += "Created by: " + msg.user.username + "\n";
-                info += "Created on: " + createDate.toLocaleDateString() + "\n";
-                info += "Expired on: " + expireDate.toLocaleDateString() + "\n";
-                info += "Distance: " + distance(lat, lng, msg.coordinates[0][1], msg.coordinates[0][0]) + " km";
+                info += "Created on: " + createDate.toLocaleString() + "\n";
+                info += "Expired on: " + expireDate.toLocaleString() + "\n";
+                info += "Distance: " + distance(lat, lng, msg.coordinates[0][1], msg.coordinates[0][0]) + " m";
                 alert(info);
             });
             data.push(row);
@@ -75,7 +84,7 @@ function Controller() {
         dist = 180 * dist / Math.PI;
         dist = 1.1515 * 60 * dist;
         dist = 1.609344 * dist;
-        return parseFloat(dist).toFixed(2);
+        return 1e3 * parseFloat(dist).toFixed(3);
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     arguments[0] ? arguments[0]["__parentSymbol"] : null;
@@ -89,11 +98,22 @@ function Controller() {
     $.__views.listWin && $.addTopLevelView($.__views.listWin);
     exports.destroy = function() {};
     _.extend($, $.__views);
+    if ("iphone" == Ti.Platform.osname) {
+        var postBtn = Ti.UI.createButton({
+            title: "Post",
+            style: Titanium.UI.iPhone.SystemButtonStyle.PLAIN
+        });
+        postBtn.addEventListener("click", function() {
+            var postController = require("lib/post");
+            postController.postActivity();
+        });
+        $.listWin.rightNavButton = postBtn;
+    }
     var tableview;
-    tableview = Titanium.UI.createTableView({
+    "android" == Ti.Platform.osname ? tableview = Titanium.UI.createTableView({
         left: 20,
         right: 20
-    });
+    }) : "iphone" == Ti.Platform.osname && (tableview = Titanium.UI.createTableView());
     $.listWin.add(tableview);
     $.listWin.addEventListener("focus", function() {
         refreshLocation();

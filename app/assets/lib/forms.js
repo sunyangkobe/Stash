@@ -2,7 +2,9 @@
 exports.STYLE_HINT = 'hint';
 exports.STYLE_LABEL = 'label';
 
+exports.TYPE_DATETIME = 'datetime';
 exports.TYPE_DATE = 'date';
+exports.TYPE_TIME = 'time';
 exports.TYPE_EMAIL = 'email';
 exports.TYPE_NUMBER = 'number';
 exports.TYPE_PASSWORD = 'password';
@@ -75,10 +77,27 @@ var addField = function(field, fieldRefs) {
 			suppressReturn : false
 		});
 		handleStyle(form, fieldObject, title);
+	} else if (type === exports.TYPE_DATETIME) {
+		fieldObject = Ti.UI.createPicker({
+			type : Ti.UI.PICKER_TYPE_DATE_AND_TIME,
+			bottom : 0,
+			minDate : new Date(),
+			selectionIndicator : true
+		});
+		handleStyle(form, undefined, title);
 	} else if (type === exports.TYPE_DATE) {
 		fieldObject = Ti.UI.createPicker({
 			type : Ti.UI.PICKER_TYPE_DATE,
 			bottom : 0,
+			minDate : new Date(),
+			selectionIndicator : true
+		});
+		handleStyle(form, undefined, title);
+	} else if (type === exports.TYPE_TIME) {
+		fieldObject = Ti.UI.createPicker({
+			type : Ti.UI.PICKER_TYPE_TIME,
+			bottom : 0,
+			minDate : new Date(),
 			selectionIndicator : true
 		});
 		handleStyle(form, undefined, title);

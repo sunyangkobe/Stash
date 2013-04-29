@@ -18,8 +18,6 @@ function Controller() {
         });
     }
     function getMessagesOnCloud(mapView, lng, lat) {
-        var yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
         var Cloud = require("ti.cloud");
         Cloud.debug = true;
         Cloud.Objects.query({
@@ -27,7 +25,7 @@ function Controller() {
             limit: 50,
             where: {
                 expiredate: {
-                    $gt: yesterday
+                    $gt: new Date()
                 },
                 coordinates: {
                     $nearSphere: [ lng, lat ],
@@ -71,6 +69,17 @@ function Controller() {
     $.__views.mapWin && $.addTopLevelView($.__views.mapWin);
     exports.destroy = function() {};
     _.extend($, $.__views);
+    if ("iphone" == Ti.Platform.osname) {
+        var postBtn = Ti.UI.createButton({
+            title: "Post",
+            style: Titanium.UI.iPhone.SystemButtonStyle.PLAIN
+        });
+        postBtn.addEventListener("click", function() {
+            var postController = require("lib/post");
+            postController.postActivity();
+        });
+        $.mapWin.rightNavButton = postBtn;
+    }
     var mapview = Titanium.Map.createView({
         mapType: Titanium.Map.STANDARD_TYPE,
         animate: true,

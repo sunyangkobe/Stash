@@ -49,8 +49,6 @@ function refreshAnnotations(mapView) {
 }
 
 function getMessagesOnCloud(mapView, lng, lat) {
-	var yesterday = new Date();
-	yesterday.setDate(yesterday.getDate() - 1);
 	var Cloud = require('ti.cloud');
 	Cloud.debug = true;
 	Cloud.Objects.query({
@@ -58,7 +56,7 @@ function getMessagesOnCloud(mapView, lng, lat) {
 		limit : 50,
 		where : {
 			expiredate : {
-				"$gt" : yesterday
+				"$gt" : new Date()
 			},
 			coordinates : {
 				$nearSphere : [lng, lat],

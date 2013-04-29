@@ -23,11 +23,13 @@ function postOnCloud(popupWin, msg, expire, lng, lat) {
         }
     }, function(e) {
         if (e.success) {
-            var toast = Titanium.UI.createNotification({
-                duration: Ti.UI.NOTIFICATION_DURATION_LONG,
-                message: "Post Successfully!"
-            });
-            toast.show();
+            if ("android" == Ti.Platform.osname) {
+                var toast = Titanium.UI.createNotification({
+                    duration: Ti.UI.NOTIFICATION_DURATION_LONG,
+                    message: "Post Successfully!"
+                });
+                toast.show();
+            }
             popupWin.close();
         } else alert("Error:\n" + (e.error && e.message || JSON.stringify(e)));
     });
@@ -38,14 +40,15 @@ exports.postActivity = function() {
         backgroundColor: "white",
         navBarHidden: true
     });
-    var fields = [ {
+    var fields;
+    "iphone" == Ti.Platform.osname ? fields = [ {
         title: "Message: ",
         type: "textarea",
         id: "id_msg"
     }, {
-        title: "Expire Date: ",
-        type: "date",
-        id: "id_expire"
+        title: "Expire Date/Time: ",
+        type: "datetime",
+        id: "id_expiredatetime"
     }, {
         title: "Post",
         type: "submit",
@@ -54,25 +57,47 @@ exports.postActivity = function() {
         title: "Back",
         type: "submit",
         id: "id_backBtn"
-    } ];
+    } ] : "android" == Ti.Platform.osname && (fields = [ {
+        title: "Message: ",
+        type: "textarea",
+        id: "id_msg"
+    }, {
+        title: "Expire Date: ",
+        type: "date",
+        id: "id_expiredate"
+    }, {
+        title: "Expire Time: ",
+        type: "time",
+        id: "id_expiretime"
+    }, {
+        title: "Post",
+        type: "submit",
+        id: "id_postBtn"
+    }, {
+        title: "Back",
+        type: "submit",
+        id: "id_backBtn"
+    } ]);
     var forms = require("lib/forms");
     var form = forms.createForm({
         style: forms.STYLE_LABEL,
         fields: fields
     });
     form.addEventListener("id_postBtn", function(e) {
-        var date = new Date(Date.parse(e.values.id_expire));
-        var yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        if (yesterday >= date) {
-            alert("Expiration date cannot be smaller than today");
+        var date;
+        if ("iphone" == Ti.Platform.osname) date = new Date(Date.parse(e.values.id_expiredatetime)); else if ("android" == Ti.Platform.osname) {
+            date = new Date(Date.parse(e.values.id_expiredate));
+            date.setTime(e.values.id_expiretime);
+        }
+        if (date.getTime() <= new Date().getTime()) {
+            alert("Expire time must be larger than current time.");
             return;
         }
         if (0 == e.values.id_msg.length) {
             alert("Message cannot be empty");
             return;
         }
-        collectCurrentLocationPost(popupWin, e.values.id_msg.replace(/^\s+|\s+$/g, ""), e.values.id_expire);
+        collectCurrentLocationPost(popupWin, e.values.id_msg.replace(/^\s+|\s+$/g, ""), date);
     });
     form.addEventListener("id_backBtn", function() {
         popupWin.close();

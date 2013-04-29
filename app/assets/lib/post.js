@@ -9,23 +9,48 @@ exports.postActivity = function() {
 		navBarHidden : true,
 	});
 
-	var fields = [{
-		title : 'Message: ',
-		type : 'textarea',
-		id : 'id_msg'
-	}, {
-		title : 'Expire Date: ',
-		type : 'date',
-		id : 'id_expire'
-	}, {
-		title : 'Post',
-		type : 'submit',
-		id : 'id_postBtn'
-	}, {
-		title : 'Back',
-		type : 'submit',
-		id : 'id_backBtn'
-	}];
+	var fields;
+	if (Ti.Platform.osname == "iphone") {
+		fields = [{
+			title : 'Message: ',
+			type : 'textarea',
+			id : 'id_msg'
+		}, {
+			title : 'Expire Date/Time: ',
+			type : 'datetime',
+			id : 'id_expiredatetime'
+		}, {
+			title : 'Post',
+			type : 'submit',
+			id : 'id_postBtn'
+		}, {
+			title : 'Back',
+			type : 'submit',
+			id : 'id_backBtn'
+		}];
+	} else if (Ti.Platform.osname == "android") {
+		fields = [{
+			title : 'Message: ',
+			type : 'textarea',
+			id : 'id_msg'
+		}, {
+			title : 'Expire Date: ',
+			type : 'date',
+			id : 'id_expiredate'
+		}, {
+			title : 'Expire Time: ',
+			type : 'time',
+			id : 'id_expiretime'
+		}, {
+			title : 'Post',
+			type : 'submit',
+			id : 'id_postBtn'
+		}, {
+			title : 'Back',
+			type : 'submit',
+			id : 'id_backBtn'
+		}];
+	}
 
 	var forms = require('lib/forms');
 	var form = forms.createForm({
@@ -34,12 +59,16 @@ exports.postActivity = function() {
 	});
 
 	form.addEventListener('id_postBtn', function(e) {
-		var date = new Date(Date.parse(e.values.id_expire));
-		var yesterday = new Date();
-		yesterday.setDate(yesterday.getDate() - 1);
+		var date;
+		if (Ti.Platform.osname == "iphone") {
+			date = new Date(Date.parse(e.values.id_expiredatetime));
+		} else if (Ti.Platform.osname == "android") {
+			date = new Date(Date.parse(e.values.id_expiredate));
+			date.setTime(e.values.id_expiretime);
+		}
 
-		if (yesterday >= date) {
-			alert("Expiration date cannot be smaller than today");
+		if (date.getTime() <= new Date().getTime()) {
+			alert("Expire time must be larger than current time.");
 			return;
 		}
 
@@ -47,7 +76,8 @@ exports.postActivity = function() {
 			alert("Message cannot be empty");
 			return;
 		}
-		collectCurrentLocationPost(popupWin, e.values.id_msg.replace(/^\s+|\s+$/g, ''), e.values.id_expire);
+		collectCurrentLocationPost(popupWin, e.values.id_msg.replace(/^\s+|\s+$/g, ''), date);
+
 	});
 
 	form.addEventListener('id_backBtn', function(e) {

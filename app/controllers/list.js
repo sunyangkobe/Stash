@@ -48,8 +48,6 @@ function refreshLocation() {
 }
 
 function getMessagesOnCloud(lng, lat) {
-	var yesterday = new Date();
-	yesterday.setDate(yesterday.getDate() - 1);
 	var Cloud = require('ti.cloud');
 	Cloud.debug = true;
 	Cloud.Objects.query({
@@ -57,7 +55,7 @@ function getMessagesOnCloud(lng, lat) {
 		limit : 50,
 		where : {
 			expiredate : {
-				"$gt" : yesterday
+				"$gt" : new Date()
 			},
 			coordinates : {
 				$nearSphere : [lng, lat],
@@ -78,8 +76,10 @@ function createTableView(messages, lng, lat) {
 	var data = [];
 	for (var i = 0; i < messages.length; i++) {
 		var msg = messages[i];
+		var row;
 		if (Ti.Platform.osname == "android") {
-			var row = Ti.UI.createTableViewRow({
+			row = Ti.UI.createTableViewRow({
+				theid : i,
 				title : msg.message,
 				color : "white",
 				font : {
@@ -91,7 +91,8 @@ function createTableView(messages, lng, lat) {
 				bottom : 10
 			});
 		} else if (Ti.Platform.osname == "iphone") {
-			var row = Ti.UI.createTableViewRow({
+			row = Ti.UI.createTableViewRow({
+				theid : i,
 				title : msg.message,
 				color : "black",
 				font : {
@@ -102,14 +103,15 @@ function createTableView(messages, lng, lat) {
 			});
 		}
 
-		var createDate = new Date(Date(msg.created_at));
-		var expireDate = new Date(Date.parse(msg.expiredate));
 		row.addEventListener("click", function(e) {
-			var info = "Message: " + msg.message + "\n";
+			var msg = messages[e.index];
+			var createDate = new Date(Date(msg.created_at));
+			var expireDate = new Date(Date.parse(msg.expiredate));
+			var info = "Message: " + msg.message + "\n\n\n";
 			info += "Created by: " + msg.user.username + "\n";
-			info += "Created on: " + createDate.toLocaleDateString() + "\n";
-			info += "Expired on: " + expireDate.toLocaleDateString() + "\n";
-			info += "Distance: " + distance(lat, lng, msg.coordinates[0][1], msg.coordinates[0][0]) + " km";
+			info += "Created on: " + createDate.toLocaleString() + "\n";
+			info += "Expired on: " + expireDate.toLocaleString() + "\n";
+			info += "Distance: " + distance(lat, lng, msg.coordinates[0][1], msg.coordinates[0][0]) + " m";
 			alert(info);
 		});
 		data.push(row);
@@ -129,5 +131,5 @@ function distance(lat1, lng1, lat2, lng2) {
 	dist = dist * 180 / Math.PI;
 	dist = dist * 60 * 1.1515;
 	dist = dist * 1.609344;
-	return parseFloat(dist).toFixed(2)
+	return parseFloat(dist).toFixed(3) * 1000
 }
