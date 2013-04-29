@@ -49,7 +49,7 @@ function Controller() {
                 longitude: msg.coordinates[0][0],
                 title: msg.message,
                 subtitle: info,
-                image: "/images/marker_purple.png",
+                image: "/images/marker_blue.png",
                 animate: true,
                 draggable: false
             });
@@ -69,17 +69,6 @@ function Controller() {
     $.__views.mapWin && $.addTopLevelView($.__views.mapWin);
     exports.destroy = function() {};
     _.extend($, $.__views);
-    if ("iphone" == Ti.Platform.osname) {
-        var postBtn = Ti.UI.createButton({
-            title: "Post",
-            style: Titanium.UI.iPhone.SystemButtonStyle.PLAIN
-        });
-        postBtn.addEventListener("click", function() {
-            var postController = require("lib/post");
-            postController.postActivity();
-        });
-        $.mapWin.rightNavButton = postBtn;
-    }
     var mapview = Titanium.Map.createView({
         mapType: Titanium.Map.STANDARD_TYPE,
         animate: true,

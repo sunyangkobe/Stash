@@ -85,7 +85,7 @@ function addAnnotationsOnMap(mapView, messages) {
 			longitude : msg.coordinates[0][0],
 			title : msg.message,
 			subtitle : info,
-			image : "/images/marker_purple.png",
+			image : "/images/marker_blue.png",
 			animate : true,
 			draggable : false
 		});

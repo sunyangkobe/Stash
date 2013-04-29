@@ -1,6 +1,6 @@
 function Controller() {
     function startApp() {
-        "android" == Ti.Platform.osname && $.index.addEventListener("open", function() {
+        $.index.addEventListener("open", function() {
             var activity = $.index.getActivity();
             activity.onCreateOptionsMenu = function(e) {
                 var menuItem = e.menu.add({
