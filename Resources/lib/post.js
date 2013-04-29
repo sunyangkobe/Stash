@@ -23,11 +23,13 @@ function postOnCloud(popupWin, msg, expire, lng, lat) {
         }
     }, function(e) {
         if (e.success) {
-            var toast = Titanium.UI.createNotification({
-                duration: Ti.UI.NOTIFICATION_DURATION_LONG,
-                message: "Post Successfully!"
-            });
-            toast.show();
+            if ("android" == Ti.Platform.osname) {
+                var toast = Titanium.UI.createNotification({
+                    duration: Ti.UI.NOTIFICATION_DURATION_LONG,
+                    message: "Post Successfully!"
+                });
+                toast.show();
+            }
             popupWin.close();
         } else alert("Error:\n" + (e.error && e.message || JSON.stringify(e)));
     });
@@ -39,7 +41,23 @@ exports.postActivity = function() {
         navBarHidden: true
     });
     var fields;
-    fields = [ {
+    "iphone" == Ti.Platform.osname ? fields = [ {
+        title: "Message: ",
+        type: "textarea",
+        id: "id_msg"
+    }, {
+        title: "Expire Date/Time: ",
+        type: "datetime",
+        id: "id_expiredatetime"
+    }, {
+        title: "Post",
+        type: "submit",
+        id: "id_postBtn"
+    }, {
+        title: "Back",
+        type: "submit",
+        id: "id_backBtn"
+    } ] : "android" == Ti.Platform.osname && (fields = [ {
         title: "Message: ",
         type: "textarea",
         id: "id_msg"
@@ -59,7 +77,7 @@ exports.postActivity = function() {
         title: "Back",
         type: "submit",
         id: "id_backBtn"
-    } ];
+    } ]);
     var forms = require("lib/forms");
     var form = forms.createForm({
         style: forms.STYLE_LABEL,
@@ -67,8 +85,10 @@ exports.postActivity = function() {
     });
     form.addEventListener("id_postBtn", function(e) {
         var date;
-        date = new Date(Date.parse(e.values.id_expiredate));
-        date.setTime(e.values.id_expiretime);
+        if ("iphone" == Ti.Platform.osname) date = new Date(Date.parse(e.values.id_expiredatetime)); else if ("android" == Ti.Platform.osname) {
+            date = new Date(Date.parse(e.values.id_expiredate));
+            date.setTime(e.values.id_expiretime);
+        }
         if (date.getTime() <= new Date().getTime()) {
             alert("Expire time must be larger than current time.");
             return;

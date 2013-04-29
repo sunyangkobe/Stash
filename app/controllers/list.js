@@ -59,7 +59,7 @@ function getMessagesOnCloud(lng, lat) {
 			},
 			coordinates : {
 				$nearSphere : [lng, lat],
-				$maxDistance : 0.00126
+				$maxDistance : 0.0000157
 			}
 		},
 		order : "created_at"
@@ -107,7 +107,7 @@ function createTableView(messages, lng, lat) {
 			var msg = messages[e.index];
 			var createDate = new Date(Date(msg.created_at));
 			var expireDate = new Date(Date.parse(msg.expiredate));
-			var info = "Message: " + msg.message + "\n\n\n";
+			var info = "Message: " + msg.message + "\n\n";
 			info += "Created by: " + msg.user.username + "\n";
 			info += "Created on: " + createDate.toLocaleString() + "\n";
 			info += "Expired on: " + expireDate.toLocaleString() + "\n";
