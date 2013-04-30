@@ -78,13 +78,12 @@ function createTableView(messages, lng, lat) {
 		});
 
 		row.add(Ti.UI.createLabel({
-			text : msg.message,
-			autoLink : Titanium.UI.AUTOLINK_ALL,
+			text : msg.message.substring(0, 35) + ((msg.message.length > 35) ? " ..." : ""),
 			height : Ti.UI.SIZE,
 			textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
 			font : {
-				fontSize : (Ti.Platform.osname == "iphone") ? 15 : 35,
-				fontFamily : 'Helvetica Neue'
+				fontSize : '16dp',
+				fontWeight : 'bold'
 			},
 			top : 10,
 			bottom : 10,
@@ -95,32 +94,10 @@ function createTableView(messages, lng, lat) {
 		}));
 
 		row.addEventListener("click", function(e) {
-			var msg = messages[e.index];
-			var createDate = new Date(Date(msg.created_at));
-			var expireDate = new Date(Date.parse(msg.expiredate));
-			var info = "Message: " + msg.message + "\n\n";
-			info += "Created by: " + msg.user.username + "\n";
-			info += "Created on: " + createDate.toLocaleString() + "\n";
-			info += "Expired on: " + expireDate.toLocaleString() + "\n";
-			info += "Distance: " + distance(lat, lng, msg.coordinates[0][1], msg.coordinates[0][0]) + " m";
-			alert(info);
+			var popoverWin = require('lib/popover');
+			popoverWin.popover(messages[e.index]);
 		});
 		data.push(row);
 	}
 	tableview.setData(data);
-}
-
-function distance(lat1, lng1, lat2, lng2) {
-	var radlat1 = Math.PI * lat1 / 180;
-	var radlat2 = Math.PI * lat2 / 180;
-	var radlng1 = Math.PI * lng1 / 180;
-	var radlng2 = Math.PI * lng2 / 180;
-	var theta = lng1 - lng2;
-	var radtheta = Math.PI * theta / 180;
-	var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-	dist = Math.acos(dist);
-	dist = dist * 180 / Math.PI;
-	dist = dist * 60 * 1.1515;
-	dist = dist * 1.609344;
-	return parseFloat(dist).toFixed(3) * 1000
 }
