@@ -25,7 +25,7 @@ function startApp() {
 			var activity = $.index.getActivity();
 			activity.onCreateOptionsMenu = function(e) {
 				var menuItem = e.menu.add({
-					title : "Post",
+					title : "Create Stash Here",
 					showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
 					// icon : "add_icon.png"
 				});

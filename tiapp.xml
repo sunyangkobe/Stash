@@ -9,10 +9,10 @@
     <id>com.mobdev.stash</id>
     <name>Stash</name>
     <version>1.0</version>
-    <publisher>Yang Sun, Shaun, Yuan Gu</publisher>
+    <publisher>Yang Sun, Shaun Blackburn, Yuan Gu</publisher>
     <url>http://</url>
     <description>Location based information sharing system</description>
-    <copyright>2013 by Yang Sun, Shaun, Yuan Gu</copyright>
+    <copyright>2013 by Yang Sun, Shaun Blackburn, Yuan Gu</copyright>
     <icon>appicon.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
