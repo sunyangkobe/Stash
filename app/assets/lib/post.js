@@ -61,10 +61,12 @@ exports.postActivity = function() {
 	form.addEventListener('id_postBtn', function(e) {
 		var date;
 		if (Ti.Platform.osname == "iphone") {
-			date = new Date(Date.parse(e.values.id_expiredatetime));
+			date = e.values.id_expiredatetime;
 		} else if (Ti.Platform.osname == "android") {
-			date = new Date(Date.parse(e.values.id_expiredate));
-			date.setTime(e.values.id_expiretime);
+			date = e.values.id_expiretime;
+			date.setDate(e.values.id_expiredate.getDate());
+			date.setFullYear(e.values.id_expiredate.getFullYear());
+			date.setMonth(e.values.id_expiredate.getMonth());
 		}
 
 		if (date.getTime() <= new Date().getTime()) {

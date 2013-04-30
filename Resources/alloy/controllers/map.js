@@ -29,7 +29,7 @@ function Controller() {
                 },
                 coordinates: {
                     $nearSphere: [ lng, lat ],
-                    $maxDistance: .00126
+                    $maxDistance: 157e-7
                 }
             }
         }, function(e) {
@@ -54,7 +54,9 @@ function Controller() {
                 draggable: false
             });
             annotations.push(annotation);
+            alert(i);
         }
+        mapView.removeAllAnnotations();
         mapView.setAnnotations(annotations);
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
@@ -73,7 +75,8 @@ function Controller() {
         mapType: Titanium.Map.STANDARD_TYPE,
         animate: true,
         regionFit: true,
-        userLocation: true
+        userLocation: true,
+        hideAnnotationWhenTouchMap: true
     });
     $.mapWin.add(mapview);
     $.mapWin.addEventListener("focus", function() {

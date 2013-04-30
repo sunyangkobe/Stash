@@ -20,7 +20,8 @@ var mapview = Titanium.Map.createView({
 	mapType : Titanium.Map.STANDARD_TYPE,
 	animate : true,
 	regionFit : true,
-	userLocation : true
+	userLocation : true,
+	hideAnnotationWhenTouchMap : true
 });
 
 $.mapWin.add(mapview);
@@ -60,7 +61,7 @@ function getMessagesOnCloud(mapView, lng, lat) {
 			},
 			coordinates : {
 				$nearSphere : [lng, lat],
-				$maxDistance : 0.00126
+				$maxDistance : 0.0000157
 			}
 		},
 	}, function(e) {
@@ -91,5 +92,6 @@ function addAnnotationsOnMap(mapView, messages) {
 		});
 		annotations.push(annotation);
 	}
+	mapView.removeAllAnnotations();
 	mapView.setAnnotations(annotations);
 }
