@@ -5,7 +5,6 @@
 exports.postActivity = function() {
 	var popupWin = Ti.UI.createWindow({
 		backgroundColor : 'white',
-		// opacity : 0.5,
 		navBarHidden : true,
 	});
 

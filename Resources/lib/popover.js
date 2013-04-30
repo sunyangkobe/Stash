@@ -54,7 +54,7 @@ exports.popover = function(msg) {
             alert("Stash cannot get your current location.");
             return;
         }
-        container.add(getLabel("Distance: " + distance(e.coords.latitude, e.coords.longitude, msg.coordinates[0][1], msg.coordinates[0][0]) + " m", true));
+        container.add(getLabel("Distance: " + distance(e.coords.latitude, e.coords.longitude, msg.coordinates[0][1], msg.coordinates[0][0]) + " m", false));
         var button = Ti.UI.createButton({
             title: "Back",
             height: "40dp",
@@ -62,7 +62,16 @@ exports.popover = function(msg) {
             top: "20dp"
         });
         button.addEventListener("click", function() {
-            popoverWin.close();
+            var options = {
+                multiple: false,
+                title: "Select files to open...",
+                types: [ "doc", "txt" ],
+                typesDescription: "Documents",
+                path: Titanium.Filesystem.getUserDirectory()
+            };
+            Titanium.UI.openFileChooserDialog(function(filename) {
+                alert(filename);
+            }, options);
         });
         container.add(button);
         var form = Ti.UI.createScrollView({
