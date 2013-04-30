@@ -44,7 +44,7 @@ function Controller() {
                 height: Ti.UI.SIZE,
                 textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
                 font: {
-                    fontSize: 30,
+                    fontSize: "iphone" == Ti.Platform.osname ? 15 : 35,
                     fontFamily: "Helvetica Neue"
                 },
                 top: 10,

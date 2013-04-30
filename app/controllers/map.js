@@ -81,15 +81,17 @@ function addAnnotationsOnMap(mapView, messages) {
 		var expireDate = new Date(Date.parse(msg.expiredate));
 		var info = "Created by " + msg.user.username;
 		info += " Expires " + expireDate.toLocaleDateString();
+
 		var annotation = Titanium.Map.createAnnotation({
 			latitude : msg.coordinates[0][1],
 			longitude : msg.coordinates[0][0],
 			title : msg.message,
 			subtitle : info,
-			image : "/images/marker_blue.png",
 			animate : true,
 			draggable : false
 		});
+		if (Ti.Platform.osname == "android")
+			annotation.setImage("/images/marker_blue.png");
 		annotations.push(annotation);
 	}
 	mapView.removeAllAnnotations();

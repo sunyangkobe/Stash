@@ -49,10 +49,10 @@ function Controller() {
                 longitude: msg.coordinates[0][0],
                 title: msg.message,
                 subtitle: info,
-                image: "/images/marker_blue.png",
                 animate: true,
                 draggable: false
             });
+            "android" == Ti.Platform.osname && annotation.setImage("/images/marker_blue.png");
             annotations.push(annotation);
         }
         mapView.removeAllAnnotations();

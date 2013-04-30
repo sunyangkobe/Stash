@@ -54,7 +54,7 @@ function Controller() {
     _.extend($, $.__views);
     var Cloud = require("ti.cloud");
     Cloud.debug = true;
-    Cloud.Users.secureLogin({
+    Cloud.accessToken ? startApp() : Cloud.Users.secureLogin({
         title: "Log in to Stash"
     }, function(e) {
         if (e.success) {

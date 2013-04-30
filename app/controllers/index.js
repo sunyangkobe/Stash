@@ -6,18 +6,20 @@ var Cloud = require('ti.cloud');
 Cloud.debug = true;
 // optional; if you add this line, set it to false for production
 
-
-Cloud.Users.secureLogin({
-	title : "Log in to Stash",
-}, function(e) {
-	if (!e.success) {
-		Ti.API.info("Error: " + JSON.stringify(e));
-	} else {
-		Ti.API.info('Success. accessToken = ' + Cloud.accessToken);
-		startApp();
-	}
-}); 
-
+if (Cloud.accessToken) {
+	startApp();
+} else {
+	Cloud.Users.secureLogin({
+		title : "Log in to Stash",
+	}, function(e) {
+		if (!e.success) {
+			Ti.API.info("Error: " + JSON.stringify(e));
+		} else {
+			Ti.API.info('Success. accessToken = ' + Cloud.accessToken);
+			startApp();
+		}
+	});
+}
 
 function startApp() {
 	if (Ti.Platform.osname == "android") {
