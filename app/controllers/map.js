@@ -91,6 +91,8 @@ function addAnnotationsOnMap(mapView, messages) {
 			draggable : false
 		});
 		annotations.push(annotation);
+		alert(i);
 	}
+	mapView.removeAllAnnotations();
 	mapView.setAnnotations(annotations);
 }
