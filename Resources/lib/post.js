@@ -85,9 +85,11 @@ exports.postActivity = function() {
     });
     form.addEventListener("id_postBtn", function(e) {
         var date;
-        if ("iphone" == Ti.Platform.osname) date = new Date(Date.parse(e.values.id_expiredatetime)); else if ("android" == Ti.Platform.osname) {
-            date = new Date(Date.parse(e.values.id_expiredate));
-            date.setTime(e.values.id_expiretime);
+        if ("iphone" == Ti.Platform.osname) date = e.values.id_expiredatetime; else if ("android" == Ti.Platform.osname) {
+            date = e.values.id_expiretime;
+            date.setDate(e.values.id_expiredate.getDate());
+            date.setFullYear(e.values.id_expiredate.getFullYear());
+            date.setMonth(e.values.id_expiredate.getMonth());
         }
         if (date.getTime() <= new Date().getTime()) {
             alert("Expire time must be larger than current time.");

@@ -35,27 +35,24 @@ function Controller() {
         var data = [];
         for (var i = 0; messages.length > i; i++) {
             var msg = messages[i];
-            var row;
-            "android" == Ti.Platform.osname ? row = Ti.UI.createTableViewRow({
-                theid: i,
-                title: msg.message,
-                color: "white",
-                font: {
-                    fontSize: 30,
-                    fontFamily: "Helvetica Neue"
-                },
+            var row = Ti.UI.createTableViewRow({
+                theid: i
+            });
+            row.add(Ti.UI.createLabel({
+                text: msg.message,
+                autoLink: Titanium.UI.AUTOLINK_ALL,
                 height: Ti.UI.SIZE,
-                top: 10,
-                bottom: 10
-            }) : "iphone" == Ti.Platform.osname && (row = Ti.UI.createTableViewRow({
-                theid: i,
-                title: msg.message,
-                color: "black",
+                textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
                 font: {
                     fontSize: 30,
                     fontFamily: "Helvetica Neue"
                 },
-                height: Ti.UI.SIZE
+                top: 10,
+                bottom: 10,
+                left: 10,
+                right: 10,
+                height: Ti.UI.SIZE,
+                width: Ti.UI.SIZE
             }));
             row.addEventListener("click", function(e) {
                 var msg = messages[e.index];
@@ -110,10 +107,7 @@ function Controller() {
         $.listWin.rightNavButton = postBtn;
     }
     var tableview;
-    "android" == Ti.Platform.osname ? tableview = Titanium.UI.createTableView({
-        left: 20,
-        right: 20
-    }) : "iphone" == Ti.Platform.osname && (tableview = Titanium.UI.createTableView());
+    "android" == Ti.Platform.osname ? tableview = Titanium.UI.createTableView({}) : "iphone" == Ti.Platform.osname && (tableview = Titanium.UI.createTableView());
     $.listWin.add(tableview);
     $.listWin.addEventListener("focus", function() {
         refreshLocation();

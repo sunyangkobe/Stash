@@ -19,10 +19,7 @@ if (Ti.Platform.osname == "iphone") {
 // create table view
 var tableview;
 if (Ti.Platform.osname == "android") {
-	tableview = Titanium.UI.createTableView({
-		left : 20,
-		right : 20,
-	});
+	tableview = Titanium.UI.createTableView({});
 } else if (Ti.Platform.osname == "iphone") {
 	tableview = Titanium.UI.createTableView();
 }
@@ -76,32 +73,26 @@ function createTableView(messages, lng, lat) {
 	var data = [];
 	for (var i = 0; i < messages.length; i++) {
 		var msg = messages[i];
-		var row;
-		if (Ti.Platform.osname == "android") {
-			row = Ti.UI.createTableViewRow({
-				theid : i,
-				title : msg.message,
-				color : "white",
-				font : {
-					fontSize : 30,
-					fontFamily : 'Helvetica Neue'
-				},
-				height : Ti.UI.SIZE,
-				top : 10,
-				bottom : 10
-			});
-		} else if (Ti.Platform.osname == "iphone") {
-			row = Ti.UI.createTableViewRow({
-				theid : i,
-				title : msg.message,
-				color : "black",
-				font : {
-					fontSize : 30,
-					fontFamily : 'Helvetica Neue'
-				},
-				height : Ti.UI.SIZE,
-			});
-		}
+		var row = Ti.UI.createTableViewRow({
+			theid : i
+		});
+
+		row.add(Ti.UI.createLabel({
+			text : msg.message,
+			autoLink : Titanium.UI.AUTOLINK_ALL,
+			height : Ti.UI.SIZE,
+			textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
+			font : {
+				fontSize : 30,
+				fontFamily : 'Helvetica Neue'
+			},
+			top : 10,
+			bottom : 10,
+			left : 10,
+			right : 10,
+			height : Ti.UI.SIZE,
+			width : Ti.UI.SIZE
+		}));
 
 		row.addEventListener("click", function(e) {
 			var msg = messages[e.index];
