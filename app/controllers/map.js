@@ -4,7 +4,7 @@
 
 if (Ti.Platform.osname == "iphone") {
 	var postBtn = Ti.UI.createButton({
-		title : "Post",
+		title : "Create Stash Here",
 		style : Titanium.UI.iPhone.SystemButtonStyle.PLAIN
 	});
 
@@ -34,7 +34,7 @@ function refreshAnnotations(mapView) {
 	Titanium.Geolocation.distanceFilter = 10;
 	Titanium.Geolocation.getCurrentPosition(function(e) {
 		if (e.error) {
-			alert('Stash cannot get your current location');
+			alert('Stash cannot get your current location.');
 			return;
 		}
 
@@ -79,7 +79,7 @@ function addAnnotationsOnMap(mapView, messages) {
 		var createDate = new Date(Date.parse(msg.created_at));
 		var expireDate = new Date(Date.parse(msg.expiredate));
 		var info = "Created by " + msg.user.username;
-		info += " and expired on: " + expireDate.toLocaleDateString();
+		info += " Expires " + expireDate.toLocaleDateString();
 		var annotation = Titanium.Map.createAnnotation({
 			latitude : msg.coordinates[0][1],
 			longitude : msg.coordinates[0][0],
