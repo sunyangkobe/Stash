@@ -11,8 +11,8 @@ function Controller() {
             mapView.setRegion({
                 latitude: e.coords.latitude,
                 longitude: e.coords.longitude,
-                latitudeDelta: .01,
-                longitudeDelta: .01
+                latitudeDelta: .001,
+                longitudeDelta: .001
             });
             getMessagesOnCloud(mapView, e.coords.longitude, e.coords.latitude);
         });
@@ -49,7 +49,7 @@ function Controller() {
                 draggable: false,
                 data: msg
             });
-            "android" == Ti.Platform.osname && annotation.setImage("/images/marker_blue.png");
+            annotation.setImage("/images/marker_blue.png");
             annotations.push(annotation);
         }
         mapView.removeAllAnnotations();
@@ -67,21 +67,9 @@ function Controller() {
     $.__views.mapWin && $.addTopLevelView($.__views.mapWin);
     exports.destroy = function() {};
     _.extend($, $.__views);
-    if ("iphone" == Ti.Platform.osname) {
-        var postBtn = Ti.UI.createButton({
-            title: "Create Stash Here",
-            style: Titanium.UI.iPhone.SystemButtonStyle.PLAIN
-        });
-        postBtn.addEventListener("click", function() {
-            var postController = require("lib/post");
-            postController.postActivity();
-        });
-        $.mapWin.rightNavButton = postBtn;
-    }
     var mapview = Titanium.Map.createView({
         mapType: Titanium.Map.STANDARD_TYPE,
         animate: true,
-        regionFit: true,
         userLocation: true,
         hideAnnotationWhenTouchMap: true
     });

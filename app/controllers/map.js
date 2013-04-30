@@ -19,9 +19,8 @@ if (Ti.Platform.osname == "iphone") {
 var mapview = Titanium.Map.createView({
 	mapType : Titanium.Map.STANDARD_TYPE,
 	animate : true,
-	regionFit : true,
 	userLocation : true,
-	hideAnnotationWhenTouchMap : true
+	hideAnnotationWhenTouchMap : true,
 });
 
 $.mapWin.add(mapview);
@@ -49,8 +48,8 @@ function refreshAnnotations(mapView) {
 		mapView.setRegion({
 			latitude : e.coords.latitude,
 			longitude : e.coords.longitude,
-			latitudeDelta : 0.01,
-			longitudeDelta : 0.01
+			latitudeDelta : 0.001,
+			longitudeDelta : 0.001
 		});
 		getMessagesOnCloud(mapView, e.coords.longitude, e.coords.latitude);
 	});

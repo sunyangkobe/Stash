@@ -62,16 +62,7 @@ exports.popover = function(msg) {
             top: "20dp"
         });
         button.addEventListener("click", function() {
-            var options = {
-                multiple: false,
-                title: "Select files to open...",
-                types: [ "doc", "txt" ],
-                typesDescription: "Documents",
-                path: Titanium.Filesystem.getUserDirectory()
-            };
-            Titanium.UI.openFileChooserDialog(function(filename) {
-                alert(filename);
-            }, options);
+            popoverWin.close();
         });
         container.add(button);
         var form = Ti.UI.createScrollView({
