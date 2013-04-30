@@ -43,7 +43,7 @@ function Controller() {
                 height: Ti.UI.SIZE,
                 textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
                 font: {
-                    fontSize: "16dp",
+                    fontSize: "20dp",
                     fontWeight: "bold"
                 },
                 top: 10,

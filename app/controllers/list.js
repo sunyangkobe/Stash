@@ -82,7 +82,7 @@ function createTableView(messages, lng, lat) {
 			height : Ti.UI.SIZE,
 			textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
 			font : {
-				fontSize : '16dp',
+				fontSize : Ti.Platform.osname == "iphone" ?'16dp' : '20dp',
 				fontWeight : 'bold'
 			},
 			top : 10,
