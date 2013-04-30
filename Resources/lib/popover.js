@@ -1,7 +1,7 @@
-function getLabel(content, isheader) {
+function getLabel(content, largeInterval) {
     return Ti.UI.createLabel({
         text: content,
-        top: isheader ? "10dp" : "5dp",
+        top: largeInterval ? "15dp" : "2dp",
         left: "35dp",
         right: "35dp",
         color: "#222",
@@ -42,10 +42,10 @@ exports.popover = function(msg) {
     var createDate = new Date(Date(msg.created_at));
     var expireDate = new Date(Date.parse(msg.expiredate));
     container.add(getLabel("Message:", true));
-    container.add(getLabel(msg.message, false));
+    container.add(getLabel(msg.message + "\n", false));
     container.add(getLabel("Created by: " + msg.user.username, true));
-    container.add(getLabel("Created at: " + createDate.toLocaleString(), true));
-    container.add(getLabel("Expired at: " + expireDate.toLocaleString(), true));
+    container.add(getLabel("Created at: " + createDate.toLocaleString(), false));
+    container.add(getLabel("Expired at: " + expireDate.toLocaleString(), false));
     Ti.Geolocation.purpose = "Recieve User Location";
     Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
     Titanium.Geolocation.distanceFilter = 10;
@@ -70,8 +70,8 @@ exports.popover = function(msg) {
             contentWidth: "auto",
             showVerticalScrollIndicator: true,
             showHorizontalScrollIndicator: true,
-            top: "35dp",
-            bottom: "35dp"
+            top: "20dp",
+            bottom: "20dp"
         });
         form.add(container);
         popoverWin.add(form);
