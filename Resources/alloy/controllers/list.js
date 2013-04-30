@@ -5,7 +5,7 @@ function Controller() {
         Titanium.Geolocation.distanceFilter = 10;
         Titanium.Geolocation.getCurrentPosition(function(e) {
             if (e.error) {
-                alert("Stash cannot get your current location");
+                alert("Stash cannot get your current location.");
                 return;
             }
             getMessagesOnCloud(e.coords.longitude, e.coords.latitude);
@@ -95,8 +95,19 @@ function Controller() {
     $.__views.listWin && $.addTopLevelView($.__views.listWin);
     exports.destroy = function() {};
     _.extend($, $.__views);
+    if ("iphone" == Ti.Platform.osname) {
+        var postBtn = Ti.UI.createButton({
+            title: "Create Stash Here",
+            style: Titanium.UI.iPhone.SystemButtonStyle.PLAIN
+        });
+        postBtn.addEventListener("click", function() {
+            var postController = require("lib/post");
+            postController.postActivity();
+        });
+        $.listWin.rightNavButton = postBtn;
+    }
     var tableview;
-    tableview = Titanium.UI.createTableView({});
+    "android" == Ti.Platform.osname ? tableview = Titanium.UI.createTableView({}) : "iphone" == Ti.Platform.osname && (tableview = Titanium.UI.createTableView());
     $.listWin.add(tableview);
     $.listWin.addEventListener("focus", function() {
         refreshLocation();

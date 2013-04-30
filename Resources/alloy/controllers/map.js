@@ -5,7 +5,7 @@ function Controller() {
         Titanium.Geolocation.distanceFilter = 10;
         Titanium.Geolocation.getCurrentPosition(function(e) {
             if (e.error) {
-                alert("Stash cannot get your current location");
+                alert("Stash cannot get your current location.");
                 return;
             }
             mapView.setRegion({
@@ -43,7 +43,7 @@ function Controller() {
             new Date(Date.parse(msg.created_at));
             var expireDate = new Date(Date.parse(msg.expiredate));
             var info = "Created by " + msg.user.username;
-            info += " and expired on: " + expireDate.toLocaleDateString();
+            info += " Expires " + expireDate.toLocaleDateString();
             var annotation = Titanium.Map.createAnnotation({
                 latitude: msg.coordinates[0][1],
                 longitude: msg.coordinates[0][0],
@@ -54,7 +54,6 @@ function Controller() {
                 draggable: false
             });
             annotations.push(annotation);
-            alert(i);
         }
         mapView.removeAllAnnotations();
         mapView.setAnnotations(annotations);
@@ -71,6 +70,17 @@ function Controller() {
     $.__views.mapWin && $.addTopLevelView($.__views.mapWin);
     exports.destroy = function() {};
     _.extend($, $.__views);
+    if ("iphone" == Ti.Platform.osname) {
+        var postBtn = Ti.UI.createButton({
+            title: "Create Stash Here",
+            style: Titanium.UI.iPhone.SystemButtonStyle.PLAIN
+        });
+        postBtn.addEventListener("click", function() {
+            var postController = require("lib/post");
+            postController.postActivity();
+        });
+        $.mapWin.rightNavButton = postBtn;
+    }
     var mapview = Titanium.Map.createView({
         mapType: Titanium.Map.STANDARD_TYPE,
         animate: true,
