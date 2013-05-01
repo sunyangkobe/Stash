@@ -44,7 +44,7 @@ function Controller() {
                 height: Ti.UI.SIZE,
                 textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
                 font: {
-                    fontSize: "iphone" == Ti.Platform.osname ? 15 : 35,
+                    fontSize: 35,
                     fontFamily: "Helvetica Neue"
                 },
                 top: 10,
@@ -95,19 +95,8 @@ function Controller() {
     $.__views.listWin && $.addTopLevelView($.__views.listWin);
     exports.destroy = function() {};
     _.extend($, $.__views);
-    if ("iphone" == Ti.Platform.osname) {
-        var postBtn = Ti.UI.createButton({
-            title: "Create Stash Here",
-            style: Titanium.UI.iPhone.SystemButtonStyle.PLAIN
-        });
-        postBtn.addEventListener("click", function() {
-            var postController = require("lib/post");
-            postController.postActivity();
-        });
-        $.listWin.rightNavButton = postBtn;
-    }
     var tableview;
-    "android" == Ti.Platform.osname ? tableview = Titanium.UI.createTableView({}) : "iphone" == Ti.Platform.osname && (tableview = Titanium.UI.createTableView());
+    tableview = Titanium.UI.createTableView({});
     $.listWin.add(tableview);
     $.listWin.addEventListener("focus", function() {
         refreshLocation();

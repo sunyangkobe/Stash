@@ -1,10 +1,10 @@
 function Controller() {
     function startApp() {
-        "android" == Ti.Platform.osname && $.index.addEventListener("open", function() {
+        $.index.addEventListener("open", function() {
             var activity = $.index.getActivity();
             activity.onCreateOptionsMenu = function(e) {
                 var menuItem = e.menu.add({
-                    title: "Create Stash Here",
+                    title: "| Create Stash Here",
                     showAsAction: Ti.Android.SHOW_AS_ACTION_ALWAYS
                 });
                 menuItem.addEventListener("click", function() {
