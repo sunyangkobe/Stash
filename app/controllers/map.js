@@ -19,14 +19,20 @@ if (Ti.Platform.osname == "iphone") {
 var mapview = Titanium.Map.createView({
 	mapType : Titanium.Map.STANDARD_TYPE,
 	animate : true,
-	regionFit : true,
 	userLocation : true,
-	hideAnnotationWhenTouchMap : true
+	hideAnnotationWhenTouchMap : true,
 });
 
 $.mapWin.add(mapview);
 $.mapWin.addEventListener("focus", function(e) {
 	refreshAnnotations(mapview);
+});
+
+$.mapWin.addEventListener("click", function(e) {
+	if (e.clicksource == "title" || e.clicksource == "subtitle") {
+		var popoverWin = require('lib/popover');
+		popoverWin.popover(e.annotation.data);
+	}
 });
 
 function refreshAnnotations(mapView) {
@@ -42,8 +48,8 @@ function refreshAnnotations(mapView) {
 		mapView.setRegion({
 			latitude : e.coords.latitude,
 			longitude : e.coords.longitude,
-			latitudeDelta : 0.01,
-			longitudeDelta : 0.01
+			latitudeDelta : 0.001,
+			longitudeDelta : 0.001
 		});
 		getMessagesOnCloud(mapView, e.coords.longitude, e.coords.latitude);
 	});
@@ -77,21 +83,19 @@ function addAnnotationsOnMap(mapView, messages) {
 	var annotations = [];
 	for (var i = 0; i < messages.length; i++) {
 		var msg = messages[i];
-		var createDate = new Date(Date.parse(msg.created_at));
-		var expireDate = new Date(Date.parse(msg.expiredate));
-		var info = "Created by " + msg.user.username;
-		info += " Expires " + expireDate.toLocaleDateString();
-
 		var annotation = Titanium.Map.createAnnotation({
 			latitude : msg.coordinates[0][1],
 			longitude : msg.coordinates[0][0],
-			title : msg.message,
-			subtitle : info,
+			title : msg.message.substring(0, 15) + " ...",
+			subtitle : "Click to see details",
 			animate : true,
-			draggable : false
+			draggable : false,
+			data : msg
 		});
+
 		if (Ti.Platform.osname == "android")
 			annotation.setImage("/images/marker_blue.png");
+
 		annotations.push(annotation);
 	}
 	mapView.removeAllAnnotations();

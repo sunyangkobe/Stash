@@ -31,7 +31,7 @@ function Controller() {
             e.success && createTableView(e.messages, lng, lat);
         });
     }
-    function createTableView(messages, lng, lat) {
+    function createTableView(messages) {
         var data = [];
         for (var i = 0; messages.length > i; i++) {
             var msg = messages[i];
@@ -39,13 +39,17 @@ function Controller() {
                 theid: i
             });
             row.add(Ti.UI.createLabel({
-                text: msg.message,
-                autoLink: Titanium.UI.AUTOLINK_ALL,
+                text: msg.message.substring(0, 35) + (msg.message.length > 35 ? " ..." : ""),
                 height: Ti.UI.SIZE,
                 textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
                 font: {
+<<<<<<< HEAD
                     fontSize: 35,
                     fontFamily: "Helvetica Neue"
+=======
+                    fontSize: "20dp",
+                    fontWeight: "bold"
+>>>>>>> f1cf16c3698849fe5b77352d1329f46ce5f5993f
                 },
                 top: 10,
                 bottom: 10,
@@ -55,33 +59,12 @@ function Controller() {
                 width: Ti.UI.SIZE
             }));
             row.addEventListener("click", function(e) {
-                var msg = messages[e.index];
-                var createDate = new Date(Date(msg.created_at));
-                var expireDate = new Date(Date.parse(msg.expiredate));
-                var info = "Message: " + msg.message + "\n\n";
-                info += "Created by: " + msg.user.username + "\n";
-                info += "Created on: " + createDate.toLocaleString() + "\n";
-                info += "Expired on: " + expireDate.toLocaleString() + "\n";
-                info += "Distance: " + distance(lat, lng, msg.coordinates[0][1], msg.coordinates[0][0]) + " m";
-                alert(info);
+                var popoverWin = require("lib/popover");
+                popoverWin.popover(messages[e.index]);
             });
             data.push(row);
         }
         tableview.setData(data);
-    }
-    function distance(lat1, lng1, lat2, lng2) {
-        var radlat1 = Math.PI * lat1 / 180;
-        var radlat2 = Math.PI * lat2 / 180;
-        Math.PI * lng1 / 180;
-        Math.PI * lng2 / 180;
-        var theta = lng1 - lng2;
-        var radtheta = Math.PI * theta / 180;
-        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-        dist = Math.acos(dist);
-        dist = 180 * dist / Math.PI;
-        dist = 1.1515 * 60 * dist;
-        dist = 1.609344 * dist;
-        return 1e3 * parseFloat(dist).toFixed(3);
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     arguments[0] ? arguments[0]["__parentSymbol"] : null;

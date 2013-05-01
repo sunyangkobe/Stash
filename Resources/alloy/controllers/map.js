@@ -11,8 +11,8 @@ function Controller() {
             mapView.setRegion({
                 latitude: e.coords.latitude,
                 longitude: e.coords.longitude,
-                latitudeDelta: .01,
-                longitudeDelta: .01
+                latitudeDelta: .001,
+                longitudeDelta: .001
             });
             getMessagesOnCloud(mapView, e.coords.longitude, e.coords.latitude);
         });
@@ -40,17 +40,14 @@ function Controller() {
         var annotations = [];
         for (var i = 0; messages.length > i; i++) {
             var msg = messages[i];
-            new Date(Date.parse(msg.created_at));
-            var expireDate = new Date(Date.parse(msg.expiredate));
-            var info = "Created by " + msg.user.username;
-            info += " Expires " + expireDate.toLocaleDateString();
             var annotation = Titanium.Map.createAnnotation({
                 latitude: msg.coordinates[0][1],
                 longitude: msg.coordinates[0][0],
-                title: msg.message,
-                subtitle: info,
+                title: msg.message.substring(0, 15) + " ...",
+                subtitle: "Click to see details",
                 animate: true,
-                draggable: false
+                draggable: false,
+                data: msg
             });
             annotation.setImage("/images/marker_blue.png");
             annotations.push(annotation);
@@ -73,13 +70,18 @@ function Controller() {
     var mapview = Titanium.Map.createView({
         mapType: Titanium.Map.STANDARD_TYPE,
         animate: true,
-        regionFit: true,
         userLocation: true,
         hideAnnotationWhenTouchMap: true
     });
     $.mapWin.add(mapview);
     $.mapWin.addEventListener("focus", function() {
         refreshAnnotations(mapview);
+    });
+    $.mapWin.addEventListener("click", function(e) {
+        if ("title" == e.clicksource || "subtitle" == e.clicksource) {
+            var popoverWin = require("lib/popover");
+            popoverWin.popover(e.annotation.data);
+        }
     });
     _.extend($, exports);
 }
