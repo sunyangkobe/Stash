@@ -4,7 +4,7 @@ function Controller() {
             var activity = $.index.getActivity();
             activity.onCreateOptionsMenu = function(e) {
                 var menuItem = e.menu.add({
-                    title: "| Create Stash Here",
+                    title: "Create Stash Here",
                     showAsAction: Ti.Android.SHOW_AS_ACTION_ALWAYS
                 });
                 menuItem.addEventListener("click", function() {
